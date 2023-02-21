@@ -1,0 +1,31 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main']
+
+jobs:
+  publish:
+    name: Publish
+
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: chainguard-dev/actions/setup-chainctl@main
+      with:
+        environment: chainops.dev
+        identity: 4486606fda9ed1e2f58057abd35cee3af0e6d894/efe41ab4b8472c5c
+
+    - uses: sigstore/cosign-installer@main
+    - run: |
+        # Copy over a bunch of the Chainguard Images
+        cosign copy -f ghcr.io/chainguard-images/static:latest-glibc  chainreg.biz/4486606fda9ed1e2f58057abd35cee3af0e6d894/static:latest-glibc
+        cosign copy -f ghcr.io/chainguard-images/static:latest        chainreg.biz/4486606fda9ed1e2f58057abd35cee3af0e6d894/static:latest
+        cosign copy -f ghcr.io/chainguard-images/busybox:latest-glibc chainreg.biz/4486606fda9ed1e2f58057abd35cee3af0e6d894/busybox:latest-glibc
+        cosign copy -f ghcr.io/chainguard-images/busybox:latest       chainreg.biz/4486606fda9ed1e2f58057abd35cee3af0e6d894/busybox:latest
+        cosign copy -f ghcr.io/chainguard-images/git:latest-glibc     chainreg.biz/4486606fda9ed1e2f58057abd35cee3af0e6d894/git:latest-glibc
+        cosign copy -f ghcr.io/chainguard-images/git:latest           chainreg.biz/4486606fda9ed1e2f58057abd35cee3af0e6d894/git:latest
